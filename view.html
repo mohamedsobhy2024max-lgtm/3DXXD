@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>تصميم مطبخك</title>
+<style>
+:root{--bg:#f3f5f7;--sf:#fff;--ink:#17212b;--mu:#617080;--ln:#d8dee4;--ac:#0b6a8f;--on:#fff;--ok:#1e8449;--okbg:#e3f3e8;--warn:#9a5b00;--warnbg:#fdf0d8;--err:#c0392b;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#11171d;--sf:#192129;--ink:#e7edf2;--mu:#92a1af;--ln:#2c3742;--ac:#5cb9de;--on:#06222e;--ok:#6fd08c;--okbg:#17301f;--warn:#f0b960;--warnbg:#33260d;--err:#ff8a7a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Segoe UI",Tahoma,sans-serif;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1{font-size:22px;margin:0;text-wrap:balance}.mu{color:var(--mu);font-size:14px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:14px;min-width:0}
+.shot{width:100%;border-radius:10px;display:block;background:#fff}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:8px 6px;border-bottom:1px solid var(--ln);text-align:right;white-space:nowrap}th{color:var(--mu);font-weight:600;font-size:13px}
+.sw{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid var(--ln);vertical-align:middle;margin-inline-end:6px}
+.price{display:flex;justify-content:space-between;align-items:baseline}.price b{font-size:24px;font-variant-numeric:tabular-nums}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;border-radius:12px;padding:12px 16px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);cursor:pointer;flex:1 1 160px}
+button.go{background:var(--ok);border-color:var(--ok);color:#fff}button.go:disabled,button:disabled{opacity:.6;cursor:default}
+textarea{width:100%;font:inherit;border-radius:10px;border:1px solid var(--ln);background:var(--bg);color:var(--ink);padding:10px;margin:8px 0}
+.badge{border-radius:12px;padding:12px;font-weight:600}.badge.ok{background:var(--okbg);color:var(--ok)}.badge.wn{background:var(--warnbg);color:var(--warn)}
+.err{color:var(--err)}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style></head><body>
+<main id="app"><div class="card mu" id="st">جاري تحميل التصميم…</div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function(){
+var URLX="https://uqutmygtydrhzyboldff.supabase.co",KEYX="sb_publishable_260e1CpGjpLElYcKWtLW1Q_VvoGW3Vg";
+var app=document.getElementById('app'),T={b:'سفلي',w:'علوي',t:'دولاب طويل'};
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function msg(t,err){app.textContent='';app.appendChild(el('div','card'+(err?' err':' mu'),t))}
+var token=(new URLSearchParams(location.search).get('t')||'').replace(/[^a-z0-9]/gi,'');
+if(!token){msg('الرابط غير صحيح.',1);return}
+if(!window.supabase){msg('تعذر تحميل الصفحة. تأكد من الاتصال بالإنترنت.',1);return}
+var sb=supabase.createClient(URLX,KEYX,{auth:{persistSession:false,autoRefreshToken:false}});
+function money(n){return Math.round(+n||0).toLocaleString('ar-EG')}
+function statusBox(st,note){var b=el('div','badge '+(st==='approved'?'ok':'wn'),st==='approved'?'تمت الموافقة على التصميم. شكرًا لك.':'تم إرسال طلب التعديل. سنتواصل معك قريبًا.');if(st==='changes'&&note){b.appendChild(el('div','mu','ملاحظتك: '+note))}return b}
+function render(r){
+ var d=r.data||{};app.textContent='';
+ app.appendChild(el('h1',null,'تصميم مطبخ '+(d.customer||r.title||'')));
+ if(d.img){var c=el('div','card');var im=document.createElement('img');im.className='shot';im.alt='صورة التصميم';im.src=d.img;c.appendChild(im);app.appendChild(c)}
+ var us=Array.isArray(d.units)?d.units:[];
+ var c2=el('div','card');c2.appendChild(el('b',null,'الوحدات ('+us.length+')'));var sc=el('div','sc'),tb=document.createElement('table'),hd=document.createElement('tr');['#','الوحدة','النوع','المقاس (سم)','اللون'].forEach(function(h){hd.appendChild(el('th',null,h))});tb.appendChild(hd);
+ us.forEach(function(u,i){var tr=document.createElement('tr');tr.appendChild(el('td',null,String(i+1)));tr.appendChild(el('td',null,u.n||''));tr.appendChild(el('td',null,T[u.t]||''));tr.appendChild(el('td',null,(u.w||0)+' × '+(u.h||0)+' × '+(u.d||0)));var tc=document.createElement('td');var sw=el('span','sw');if(/^#[0-9a-f]{6}$/i.test(u.c||''))sw.style.background=u.c;tc.appendChild(sw);tr.appendChild(tc);tb.appendChild(tr)});
+ sc.appendChild(tb);c2.appendChild(sc);app.appendChild(c2);
+ if(d.showPrice&&d.net>0){var pc=el('div','card price');pc.appendChild(el('span',null,'إجمالي التكلفة'));pc.appendChild(el('b',null,money(d.net)+' ج.م'));app.appendChild(pc)}
+ var dc=el('div','card');app.appendChild(dc);
+ if(r.status!=='pending'){dc.appendChild(statusBox(r.status,r.note));return}
+ dc.appendChild(el('b',null,'رأيك في التصميم'));dc.appendChild(el('div','mu','بعد الإرسال لا يمكن تغيير الرد من هنا.'));
+ var ta=document.createElement('textarea');ta.rows=3;ta.maxLength=500;ta.placeholder='اكتب ملاحظاتك إن أردت طلب تعديل';ta.setAttribute('aria-label','ملاحظاتك');dc.appendChild(ta);
+ var row=el('div','btns'),ok=el('button','go','موافق على التصميم'),ch=el('button',null,'أريد تعديلًا');row.appendChild(ok);row.appendChild(ch);dc.appendChild(row);var er=el('div','err');dc.appendChild(er);
+ function send(st){var note=ta.value.trim();if(st==='changes'&&!note){er.textContent='اكتب ما تريد تعديله أولًا.';ta.focus();return}er.textContent='';ok.disabled=ch.disabled=true;
+  sb.rpc('mg_share_decide',{p_token:token,p_status:st,p_note:note}).then(function(x){if(x.error||!x.data||!x.data.ok){ok.disabled=ch.disabled=false;er.textContent=x.error?'تعذر الإرسال. حاول مرة أخرى.':'تم الرد على هذا التصميم من قبل.';return}dc.textContent='';dc.appendChild(statusBox(st,note))},function(){ok.disabled=ch.disabled=false;er.textContent='تعذر الاتصال بالإنترنت.'})}
+ ok.onclick=function(){send('approved')};ch.onclick=function(){send('changes')}}
+sb.rpc('mg_share_get',{p_token:token}).then(function(x){if(x.error){msg('تعذر تحميل التصميم. حاول لاحقًا.',1);return}if(!x.data){msg('هذا الرابط غير موجود أو تم إيقافه.',1);return}render(x.data)},function(){msg('تعذر الاتصال بالإنترنت.',1)});
+})();
+</script></body></html>
